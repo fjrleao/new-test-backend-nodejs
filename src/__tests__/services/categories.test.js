@@ -68,4 +68,28 @@ describe('Testing categories service', () => {
 			await expect(sut.add(categoryData)).rejects.toThrow(AppError)
 		})
 	})
+
+	describe('Testing update category', () => {
+		test('Should return category data on success', async () => {
+			const sut = makeSut()
+			const databaseCategory = db.collection('categories')
+			const categoryId = await databaseCategory.insertOne({
+				title: 'valid_title',
+				owner: 'valid_owner',
+				description: 'valid_description',
+			}).insertedId
+			const category = await sut.update(
+				{
+					title: 'updated_title',
+					owner: 'updated_owner',
+					description: 'updated_description',
+				},
+				categoryId
+			)
+			expect(category._id).toBe(categoryId)
+			expect(category.title).toBe('updated_title')
+			expect(category.owner).toBe('updated_owner')
+			expect(category.description).toBe('updated_description')
+		})
+	})
 })
