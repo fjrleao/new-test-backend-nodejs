@@ -1,4 +1,5 @@
 import { AppError } from '../errors/AppError'
+import { verifyDataExists } from '../utils/verifyDataExists.utils'
 
 export class CategoryService {
 	#db
@@ -25,15 +26,19 @@ export class CategoryService {
 	async update(categoryData, categoryId) {
 		const categories = this.#db.collection('categories')
 
+		await verifyDataExists(categories, categoryId)
+
 		await categories.updateOne(
 			{
 				_id: categoryId,
 			},
 			{
-				$set: { categoryData },
+				$set: { ...categoryData },
 			}
 		)
 
-		return categoryData
+		const updatedCategory = await categories.findOne({ _id: categoryId })
+
+		return updatedCategory
 	}
 }
