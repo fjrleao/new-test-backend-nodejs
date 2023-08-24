@@ -18,8 +18,22 @@ export class CategoryService {
 			throw new AppError('Category already exists', 409)
 		}
 
-		const newCategory = await categories.insertOne(categoryData)
-		const findCategory = await categories.findOne(newCategory.insertedId)
-		return findCategory
+		await categories.insertOne(categoryData)
+		return categoryData
+	}
+
+	async update(categoryData, categoryId) {
+		const categories = this.#db.collection('categories')
+
+		await categories.updateOne(
+			{
+				_id: categoryId,
+			},
+			{
+				$set: { categoryData },
+			}
+		)
+
+		return categoryData
 	}
 }
