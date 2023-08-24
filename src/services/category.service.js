@@ -13,6 +13,7 @@ export class CategoryService {
 
 		const categoryAlreadyExists = await categories.findOne({
 			title: categoryData.title,
+			owner: categoryData.owner,
 		})
 
 		if (categoryAlreadyExists) {
