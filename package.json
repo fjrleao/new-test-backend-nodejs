@@ -1,0 +1,20 @@
+{
+  "name": "anotai-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.22.11",
+    "@babel/preset-env": "^7.22.10",
+    "babel-jest": "^29.6.4",
+    "eslint": "^8.47.0",
+    "eslint-config-standard": "^17.1.0",
+    "jest": "^29.6.4"
+  }
+}
