@@ -56,11 +56,30 @@ describe('Testing categories service', () => {
 			expect(insertedCategory.description).toBe('correct_description')
 		})
 
-		test('Should throw an AppError when a category already exists', async () => {
+		test('Should add same name category if owner is diferent ', async () => {
+			const sut = makeSut()
+			const databaseCategory = db.collection('categories')
+			await databaseCategory.insertOne({
+				title: 'exists_title',
+				owner: 'exists_owner',
+				description: 'correct_description',
+			})
+			const category = await sut.add({
+				title: 'exists_title',
+				owner: 'other_owner',
+				description: 'correct_description',
+			})
+			expect(category._id).toBeTruthy()
+			expect(category.title).toBe('exists_title')
+			expect(category.owner).toBe('other_owner')
+			expect(category.description).toBe('correct_description')
+		})
+
+		test('Should throw an AppError when a category already exists to an owner', async () => {
 			const sut = makeSut()
 			const categoryData = {
 				title: 'exists_title',
-				owner: 'correct_owner',
+				owner: 'exists_owner',
 				description: 'correct_description',
 			}
 			const databaseCategory = db.collection('categories')
