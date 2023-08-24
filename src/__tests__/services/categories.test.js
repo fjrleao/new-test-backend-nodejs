@@ -72,24 +72,39 @@ describe('Testing categories service', () => {
 	describe('Testing update category', () => {
 		test('Should return category data on success', async () => {
 			const sut = makeSut()
-			const databaseCategory = db.collection('categories')
-			const categoryId = await databaseCategory.insertOne({
+			const collectionCategory = db.collection('categories')
+			const insertedCategory = await collectionCategory.insertOne({
 				title: 'valid_title',
 				owner: 'valid_owner',
 				description: 'valid_description',
-			}).insertedId
+			})
+
 			const category = await sut.update(
 				{
 					title: 'updated_title',
 					owner: 'updated_owner',
 					description: 'updated_description',
 				},
-				categoryId
+				insertedCategory.insertedId
 			)
-			expect(category._id).toBe(categoryId)
+			expect(category._id).toStrictEqual(insertedCategory.insertedId)
 			expect(category.title).toBe('updated_title')
 			expect(category.owner).toBe('updated_owner')
 			expect(category.description).toBe('updated_description')
+		})
+
+		test('Should throw an AppError when id does not exists', async () => {
+			const sut = makeSut()
+			await expect(
+				sut.update(
+					{
+						title: 'updated_title',
+						owner: 'updated_owner',
+						description: 'updated_description',
+					},
+					'id_invalid'
+				)
+			).rejects.toThrow(AppError)
 		})
 	})
 })
