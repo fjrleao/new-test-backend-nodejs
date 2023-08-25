@@ -13,8 +13,8 @@ describe('Testing products service', () => {
 		})
 		db = connection.db(globalThis.__MONGO_DB_NAME__)
 		await db.collection('categories').insertOne({
-			title: 'correct_category',
-			description: 'correct_description',
+			title: 'valid_category',
+			description: 'valid_description',
 		})
 	})
 
@@ -34,38 +34,38 @@ describe('Testing products service', () => {
 		test('Should return product data on success', async () => {
 			const sut = makeSut()
 			const product = await sut.add({
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'correct_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
-			expect(product.title).toBe('correct_title')
-			expect(product.owner).toBe('correct_owner')
-			expect(product.description).toBe('correct_description')
+			expect(product.title).toBe('valid_title')
+			expect(product.owner).toBe('valid_owner')
+			expect(product.description).toBe('valid_description')
 			expect(product.price).toBe(100.5)
-			expect(product.category).toBe('correct_category')
+			expect(product.category).toBe('valid_category')
 		})
 
 		test('Should save a product on database', async () => {
 			const sut = makeSut()
 			const product = await sut.add({
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'correct_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 			const databaseProduct = db.collection('products')
 			const insertedProduct = await databaseProduct.findOne({
-				title: 'correct_title',
+				title: 'valid_title',
 			})
 			expect(product._id).toBeTruthy()
-			expect(insertedProduct.title).toBe('correct_title')
-			expect(insertedProduct.owner).toBe('correct_owner')
-			expect(insertedProduct.description).toBe('correct_description')
+			expect(insertedProduct.title).toBe('valid_title')
+			expect(insertedProduct.owner).toBe('valid_owner')
+			expect(insertedProduct.description).toBe('valid_description')
 			expect(insertedProduct.price).toBe(100.5)
-			expect(insertedProduct.category).toBe('correct_category')
+			expect(insertedProduct.category).toBe('valid_category')
 		})
 
 		test('Should add same name product if owner is diferent ', async () => {
@@ -74,23 +74,23 @@ describe('Testing products service', () => {
 			await databaseProduct.insertOne({
 				title: 'exists_title',
 				owner: 'exists_owner',
-				category: 'correct_category',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 			const product = await sut.add({
 				title: 'exists_title',
 				owner: 'other_owner',
-				category: 'correct_category',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 			expect(product._id).toBeTruthy()
 			expect(product.title).toBe('exists_title')
 			expect(product.owner).toBe('other_owner')
-			expect(product.description).toBe('correct_description')
+			expect(product.description).toBe('valid_description')
 			expect(product.price).toBe(100.5)
-			expect(product.category).toBe('correct_category')
+			expect(product.category).toBe('valid_category')
 		})
 
 		test('Should throw an AppError when a product already exists to an owner', async () => {
@@ -98,9 +98,9 @@ describe('Testing products service', () => {
 			const productData = {
 				title: 'exists_title',
 				owner: 'exists_owner',
-				category: 'correct_category',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			}
 			const databaseProduct = db.collection('products')
 			await databaseProduct.insertOne(productData)
@@ -110,11 +110,11 @@ describe('Testing products service', () => {
 		test('Should throw an AppError when a category does not exists', async () => {
 			const sut = makeSut()
 			const productData = {
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'incorrect_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'invalid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			}
 			await expect(sut.add(productData)).rejects.toThrow(AppError)
 		})
@@ -125,11 +125,11 @@ describe('Testing products service', () => {
 			const sut = makeSut()
 			const collectionProduct = db.collection('products')
 			const insertedProduct = await collectionProduct.insertOne({
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'correct_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 
 			const product = await sut.update(
@@ -167,11 +167,11 @@ describe('Testing products service', () => {
 			const sut = makeSut()
 			const collectionProduct = db.collection('products')
 			const insertedProduct = await collectionProduct.insertOne({
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'correct_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 
 			await expect(
@@ -179,7 +179,7 @@ describe('Testing products service', () => {
 					{
 						title: 'updated_title',
 						owner: 'updated_owner',
-						category: 'incorrect_category',
+						category: 'invalid_category',
 						price: 10,
 						description: 'updated_description',
 					},
@@ -194,11 +194,11 @@ describe('Testing products service', () => {
 			const sut = makeSut()
 			const collectionProduct = db.collection('products')
 			const insertedProduct = await collectionProduct.insertOne({
-				title: 'correct_title',
-				owner: 'correct_owner',
-				category: 'correct_category',
+				title: 'valid_title',
+				owner: 'valid_owner',
+				category: 'valid_category',
 				price: 100.5,
-				description: 'correct_description',
+				description: 'valid_description',
 			})
 
 			await sut.delete(insertedProduct.insertedId)
