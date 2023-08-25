@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb'
 import 'dotenv/config'
 
 export class DatabaseConfig {
-	static #conn
+	static #db
 
 	static async connect() {
 		const MONGODB_URL = process.env.MONGODB_URL
@@ -13,10 +13,11 @@ export class DatabaseConfig {
 
 		const client = new MongoClient(MONGODB_URL)
 
-		this.#conn = await client.connect()
+		const conn = await client.connect()
+		this.#db = conn.db('database')
 	}
 
-	static getConnection() {
-		return this.#conn
+	static getDatabase() {
+		return this.#db
 	}
 }
