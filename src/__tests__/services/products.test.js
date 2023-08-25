@@ -119,4 +119,73 @@ describe('Testing categories service', () => {
 			await expect(sut.add(productData)).rejects.toThrow(AppError)
 		})
 	})
+
+	describe('Testing update product', () => {
+		test('Should return product data on success', async () => {
+			const sut = makeSut()
+			const collectionProduct = db.collection('products')
+			const insertedProduct = await collectionProduct.insertOne({
+				title: 'correct_title',
+				owner: 'correct_owner',
+				category: 'correct_category',
+				price: 100.5,
+				description: 'correct_description',
+			})
+
+			const product = await sut.update(
+				{
+					title: 'updated_title',
+					owner: 'updated_owner',
+					price: 10,
+					description: 'updated_description',
+				},
+				insertedProduct.insertedId
+			)
+			expect(product._id).toStrictEqual(insertedProduct.insertedId)
+			expect(product.title).toBe('updated_title')
+			expect(product.owner).toBe('updated_owner')
+			expect(product.description).toBe('updated_description')
+			expect(product.price).toBe(10)
+		})
+
+		test('Should throw an AppError when id does not exists', async () => {
+			const sut = makeSut()
+			await expect(
+				sut.update(
+					{
+						title: 'updated_title',
+						owner: 'updated_owner',
+						price: 10,
+						description: 'updated_description',
+					},
+					'id_invalid'
+				)
+			).rejects.toThrow(AppError)
+		})
+
+		test('Should throw an AppError when a category does not exists', async () => {
+			const sut = makeSut()
+			const collectionProduct = db.collection('products')
+			const insertedProduct = await collectionProduct.insertOne({
+				title: 'correct_title',
+				owner: 'correct_owner',
+				category: 'correct_category',
+				price: 100.5,
+				description: 'correct_description',
+			})
+
+			await expect(
+				sut.update(
+					{
+						title: 'updated_title',
+						owner: 'updated_owner',
+						category: 'incorrect_category',
+						price: 10,
+						description: 'updated_description',
+					},
+					insertedProduct.insertedId
+				)
+			).rejects.toThrow(AppError)
+		})
+	})
 })
