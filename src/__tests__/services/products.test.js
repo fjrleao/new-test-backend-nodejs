@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb'
 import { AppError } from '../../errors/AppError'
 import { ProductService } from '../../services/product.service'
 
-describe('Testing categories service', () => {
+describe('Testing products service', () => {
 	let connection
 	let db
 
@@ -186,6 +186,31 @@ describe('Testing categories service', () => {
 					insertedProduct.insertedId
 				)
 			).rejects.toThrow(AppError)
+		})
+	})
+
+	describe('Testing delete product', () => {
+		test('Should remove a product from database', async () => {
+			const sut = makeSut()
+			const collectionProduct = db.collection('products')
+			const insertedProduct = await collectionProduct.insertOne({
+				title: 'correct_title',
+				owner: 'correct_owner',
+				category: 'correct_category',
+				price: 100.5,
+				description: 'correct_description',
+			})
+
+			await sut.delete(insertedProduct.insertedId)
+			const findProduct = await collectionProduct.findOne({
+				_id: insertedProduct.insertedId,
+			})
+			expect(findProduct).toBeNull()
+		})
+
+		test('Should throw an AppError when id does not exists', async () => {
+			const sut = makeSut()
+			await expect(sut.delete('id_invalid')).rejects.toThrow(AppError)
 		})
 	})
 })
