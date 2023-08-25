@@ -42,4 +42,12 @@ export class CategoryService {
 
 		return updatedCategory
 	}
+
+	async delete(categoryId) {
+		const categories = this.#db.collection('categories')
+
+		await verifyDataExists(categories, categoryId)
+
+		await categories.deleteOne({ _id: categoryId })
+	}
 }
