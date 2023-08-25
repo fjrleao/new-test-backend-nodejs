@@ -1,4 +1,5 @@
 import { AppError } from '../errors/AppError'
+import { verifyDataExists } from '../utils/verifyDataExists.utils'
 
 export class ProductService {
 	#db
@@ -33,5 +34,38 @@ export class ProductService {
 
 		await products.insertOne(productData)
 		return productData
+	}
+
+	async update(productData, productId) {
+		const products = this.#db.collection('products')
+		const categories = this.#db.collection('categories')
+
+		await verifyDataExists(products, productId)
+
+		await products.updateOne(
+			{
+				_id: productId,
+			},
+			{
+				$set: { ...productData },
+			}
+		)
+
+		if (productData.category) {
+			const categoryExists = await categories.findOne({
+				title: productData.category,
+			})
+
+			if (!categoryExists) {
+				throw new AppError(
+					'Category does not exists. Verify the submitted title or create a new category.',
+					404
+				)
+			}
+		}
+
+		const updatedProduct = await products.findOne({ _id: productId })
+
+		return updatedProduct
 	}
 }
