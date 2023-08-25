@@ -23,10 +23,20 @@ describe('Testing categories service', () => {
 		await connection.close()
 	})
 
-	test('Should throw an AppError when id does not exists', async () => {
+	test('Should return true when category exists', async () => {
 		const category = db.collection('categories')
-		await expect(verifyDataExists(category, '123123123')).rejects.toThrow(
-			AppError
-		)
+		await category.insertOne({
+			_id: 'exist_id',
+			title: 'valid_title',
+			description: 'valid_description',
+		})
+		const dataExists = await verifyDataExists(category, 'exist_id')
+		expect(dataExists).toBe(true)
+	})
+
+	test('Should return false when category does not exists', async () => {
+		const category = db.collection('categories')
+		const dataExists = await verifyDataExists(category, 'id_not_exists')
+		expect(dataExists).toBe(false)
 	})
 })
