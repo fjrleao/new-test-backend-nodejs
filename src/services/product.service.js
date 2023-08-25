@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { AppError } from '../errors/AppError'
 import { verifyDataExists } from '../utils/verifyDataExists.utils'
 
@@ -48,7 +49,7 @@ export class ProductService {
 
 		await products.updateOne(
 			{
-				_id: productId,
+				_id: new ObjectId(productId),
 			},
 			{
 				$set: { ...productData },
@@ -68,7 +69,9 @@ export class ProductService {
 			}
 		}
 
-		const updatedProduct = await products.findOne({ _id: productId })
+		const updatedProduct = await products.findOne({
+			_id: new ObjectId(productId),
+		})
 
 		return updatedProduct
 	}
@@ -82,6 +85,6 @@ export class ProductService {
 			throw new AppError('Product does not exists', 404)
 		}
 
-		await products.deleteOne({ _id: productId })
+		await products.deleteOne({ _id: new ObjectId(productId) })
 	}
 }

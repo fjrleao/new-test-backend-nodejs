@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { AppError } from '../errors/AppError'
 import { verifyDataExists } from '../utils/verifyDataExists.utils'
 
@@ -35,14 +36,16 @@ export class CategoryService {
 
 		await categories.updateOne(
 			{
-				_id: categoryId,
+				_id: new ObjectId(categoryId),
 			},
 			{
 				$set: { ...categoryData },
 			}
 		)
 
-		const updatedCategory = await categories.findOne({ _id: categoryId })
+		const updatedCategory = await categories.findOne({
+			_id: new ObjectId(categoryId),
+		})
 
 		return updatedCategory
 	}
@@ -56,6 +59,6 @@ export class CategoryService {
 			throw new AppError('Category does not exists', 404)
 		}
 
-		await categories.deleteOne({ _id: categoryId })
+		await categories.deleteOne({ _id: new ObjectId(categoryId) })
 	}
 }

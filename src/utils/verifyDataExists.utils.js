@@ -1,8 +1,8 @@
-import { AppError } from '../errors/AppError'
+import { ObjectId } from 'mongodb'
 
 export async function verifyDataExists(collection, id) {
 	const findData = await collection.findOne({
-		_id: id,
+		_id: new ObjectId(id),
 	})
 
 	if (!findData) {
