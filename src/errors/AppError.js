@@ -1,10 +1,10 @@
 export class AppError extends Error {
-	#message
-	#statusCode
+	message
+	statusCode
 
 	constructor(message, statusCode = 400) {
 		super()
-		this.#message = message
-		this.#statusCode = statusCode
+		this.message = message
+		this.statusCode = statusCode
 	}
 }
