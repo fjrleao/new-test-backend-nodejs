@@ -6,6 +6,8 @@ export async function verifyDataExists(collection, id) {
 	})
 
 	if (!findData) {
-		throw new AppError('Id not found', 404)
+		return false
 	}
+
+	return true
 }
