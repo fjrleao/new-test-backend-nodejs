@@ -3,6 +3,7 @@ import express from 'express'
 import categoryRoutes from './routes/category.routes'
 import productRoutes from './routes/product.routes'
 import { AppError } from './errors/AppError'
+import { ZodError } from 'zod'
 
 const app = express()
 app.use(express.json())
@@ -14,6 +15,12 @@ app.use((err, req, res, next) => {
 	if (err instanceof AppError) {
 		return res.status(err.statusCode).json({
 			message: err.message,
+		})
+	}
+
+	if (err instanceof ZodError) {
+		return res.status(400).json({
+			message: err.flatten().fieldErrors,
 		})
 	}
 
