@@ -40,7 +40,11 @@ export class ProductService {
 		const products = this.#db.collection('products')
 		const categories = this.#db.collection('categories')
 
-		await verifyDataExists(products, productId)
+		const productExists = await verifyDataExists(products, productId)
+
+		if (!productExists) {
+			throw new AppError('Product does not exists', 404)
+		}
 
 		await products.updateOne(
 			{
@@ -72,7 +76,11 @@ export class ProductService {
 	async delete(productId) {
 		const products = this.#db.collection('products')
 
-		await verifyDataExists(products, productId)
+		const productExists = await verifyDataExists(products, productId)
+
+		if (!productExists) {
+			throw new AppError('Product does not exists', 404)
+		}
 
 		await products.deleteOne({ _id: productId })
 	}

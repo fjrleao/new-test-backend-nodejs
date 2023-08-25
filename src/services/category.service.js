@@ -27,7 +27,11 @@ export class CategoryService {
 	async update(categoryData, categoryId) {
 		const categories = this.#db.collection('categories')
 
-		await verifyDataExists(categories, categoryId)
+		const categoryExists = await verifyDataExists(categories, categoryId)
+
+		if (!categoryExists) {
+			throw new AppError('Category does not exists', 404)
+		}
 
 		await categories.updateOne(
 			{
@@ -46,7 +50,11 @@ export class CategoryService {
 	async delete(categoryId) {
 		const categories = this.#db.collection('categories')
 
-		await verifyDataExists(categories, categoryId)
+		const categoryExists = await verifyDataExists(categories, categoryId)
+
+		if (!categoryExists) {
+			throw new AppError('Category does not exists', 404)
+		}
 
 		await categories.deleteOne({ _id: categoryId })
 	}
