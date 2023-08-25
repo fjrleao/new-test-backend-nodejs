@@ -121,7 +121,7 @@ describe('Testing categories service', () => {
 						owner: 'updated_owner',
 						description: 'updated_description',
 					},
-					'id_invalid'
+					123
 				)
 			).rejects.toThrow(AppError)
 		})
@@ -146,7 +146,7 @@ describe('Testing categories service', () => {
 
 		test('Should throw an AppError when id does not exists', async () => {
 			const sut = makeSut()
-			await expect(sut.delete('id_invalid')).rejects.toThrow(AppError)
+			await expect(sut.delete(123)).rejects.toThrow(AppError)
 		})
 	})
 })

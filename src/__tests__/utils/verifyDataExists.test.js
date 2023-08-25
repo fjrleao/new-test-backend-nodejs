@@ -25,18 +25,20 @@ describe('Testing categories service', () => {
 
 	test('Should return true when category exists', async () => {
 		const category = db.collection('categories')
-		await category.insertOne({
-			_id: 'exist_id',
+		const inesrtedCategory = await category.insertOne({
 			title: 'valid_title',
 			description: 'valid_description',
 		})
-		const dataExists = await verifyDataExists(category, 'exist_id')
+		const dataExists = await verifyDataExists(
+			category,
+			inesrtedCategory.insertedId
+		)
 		expect(dataExists).toBe(true)
 	})
 
 	test('Should return false when category does not exists', async () => {
 		const category = db.collection('categories')
-		const dataExists = await verifyDataExists(category, 'id_not_exists')
+		const dataExists = await verifyDataExists(category, 123)
 		expect(dataExists).toBe(false)
 	})
 })
