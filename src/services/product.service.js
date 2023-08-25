@@ -68,4 +68,12 @@ export class ProductService {
 
 		return updatedProduct
 	}
+
+	async delete(productId) {
+		const products = this.#db.collection('products')
+
+		await verifyDataExists(products, productId)
+
+		await products.deleteOne({ _id: productId })
+	}
 }
