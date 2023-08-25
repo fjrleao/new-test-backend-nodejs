@@ -126,4 +126,27 @@ describe('Testing categories service', () => {
 			).rejects.toThrow(AppError)
 		})
 	})
+
+	describe('Testing delete category', () => {
+		test('Should remove a category from database', async () => {
+			const sut = makeSut()
+			const collectionCategory = db.collection('categories')
+			const insertedCategory = await collectionCategory.insertOne({
+				title: 'valid_title',
+				owner: 'valid_owner',
+				description: 'valid_description',
+			})
+
+			await sut.delete(insertedCategory.insertedId)
+			const findCategory = await collectionCategory.findOne({
+				_id: insertedCategory.insertedId,
+			})
+			expect(findCategory).toBeNull()
+		})
+
+		test('Should throw an AppError when id does not exists', async () => {
+			const sut = makeSut()
+			await expect(sut.delete('id_invalid')).rejects.toThrow(AppError)
+		})
+	})
 })
