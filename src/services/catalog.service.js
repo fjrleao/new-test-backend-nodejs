@@ -28,7 +28,11 @@ export class CatalogService {
 				catalog.catalog.push({
 					category_title: categorie.title,
 					category_description: categorie.description,
-					itens: allCategorieProducts,
+					itens: allCategorieProducts.map((product) => ({
+						title: product.title,
+						description: product.description,
+						price: product.price,
+					})),
 				})
 			}
 		}
