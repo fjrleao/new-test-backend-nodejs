@@ -4,12 +4,14 @@ import categoryRoutes from './routes/category.routes'
 import productRoutes from './routes/product.routes'
 import { AppError } from './errors/AppError'
 import { ZodError } from 'zod'
+import catalogRoutes from './routes/catalog.routes'
 
 const app = express()
 app.use(express.json())
 
 app.use('/categories', categoryRoutes)
 app.use('/products', productRoutes)
+app.use('/catalog', catalogRoutes)
 
 app.use((err, req, res, next) => {
 	if (err instanceof AppError) {
@@ -21,6 +23,12 @@ app.use((err, req, res, next) => {
 	if (err instanceof ZodError) {
 		return res.status(400).json({
 			message: err.flatten().fieldErrors,
+		})
+	}
+
+	if (err.code === 'NoSuchKey') {
+		return res.status(404).json({
+			message: 'Data not found',
 		})
 	}
 

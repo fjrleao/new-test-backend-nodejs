@@ -45,4 +45,10 @@ export class CatalogService {
 
 		await s3.uploadS3JSONFile(`catalog-${data.owner}.json`, data)
 	}
+
+	async getCatalogFromS3(owner) {
+		const s3 = new AWSS3()
+		const data = s3.getContentS3JSONFile(`catalog-${owner}.json`)
+		return data
+	}
 }
