@@ -68,6 +68,16 @@ export class ProductService {
 			}
 		}
 
+		if (productData.title) {
+			const productExists = await products.findOne({
+				title: productData.title,
+			})
+
+			if (productExists) {
+				throw new AppError('Product already exists', 409)
+			}
+		}
+
 		delete productData['owner']
 
 		await products.updateOne(
