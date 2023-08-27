@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb'
 import { AppError } from '../errors/AppError'
 import { verifyDataExists } from '../utils/verifyDataExists.utils'
 import { CatalogService } from './catalog.service'
+import { AWSSQS } from '../utils/aws'
 
 export class ProductService {
 	#db
@@ -36,11 +37,8 @@ export class ProductService {
 
 		await products.insertOne(productData)
 
-		const catalogService = new CatalogService(this.#db)
-		const catalogData = await catalogService.generateCatalogJSON(
-			productData.owner
-		)
-		await catalogService.uploadCatalogToS3(catalogData)
+		const awsSQS = new AWSSQS()
+		await awsSQS.sendJSONMessage({ owner: productData.owner })
 
 		return productData
 	}
@@ -93,11 +91,8 @@ export class ProductService {
 			_id: new ObjectId(productId),
 		})
 
-		const catalogService = new CatalogService(this.#db)
-		const catalogData = await catalogService.generateCatalogJSON(
-			updatedProduct.owner
-		)
-		await catalogService.uploadCatalogToS3(catalogData)
+		const awsSQS = new AWSSQS()
+		await awsSQS.sendJSONMessage({ owner: updatedProduct.owner })
 
 		return updatedProduct
 	}
