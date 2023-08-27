@@ -1,3 +1,5 @@
+import { AWSS3 } from '../utils/aws'
+
 export class CatalogService {
 	#db
 
@@ -32,5 +34,11 @@ export class CatalogService {
 		}
 
 		return catalog
+	}
+
+	async uploadCatalogToS3(data) {
+		const s3 = new AWSS3()
+
+		await s3.uploadS3JSONFile(`catalog-${data.owner}.json`, data)
 	}
 }
