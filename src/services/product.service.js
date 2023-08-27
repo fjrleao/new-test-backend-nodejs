@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { AppError } from '../errors/AppError'
 import { verifyDataExists } from '../utils/verifyDataExists.utils'
+import { CatalogService } from './catalog.service'
 
 export class ProductService {
 	#db
@@ -34,6 +35,13 @@ export class ProductService {
 		}
 
 		await products.insertOne(productData)
+
+		const catalogService = new CatalogService(this.#db)
+		const catalogData = await catalogService.generateCatalogJSON(
+			productData.owner
+		)
+		await catalogService.uploadCatalogToS3(catalogData)
+
 		return productData
 	}
 
@@ -46,15 +54,6 @@ export class ProductService {
 		if (!productExists) {
 			throw new AppError('Product does not exists', 404)
 		}
-
-		await products.updateOne(
-			{
-				_id: new ObjectId(productId),
-			},
-			{
-				$set: { ...productData },
-			}
-		)
 
 		if (productData.category) {
 			const categoryExists = await categories.findOne({
@@ -69,9 +68,26 @@ export class ProductService {
 			}
 		}
 
+		delete productData['owner']
+
+		await products.updateOne(
+			{
+				_id: new ObjectId(productId),
+			},
+			{
+				$set: { ...productData },
+			}
+		)
+
 		const updatedProduct = await products.findOne({
 			_id: new ObjectId(productId),
 		})
+
+		const catalogService = new CatalogService(this.#db)
+		const catalogData = await catalogService.generateCatalogJSON(
+			updatedProduct.owner
+		)
+		await catalogService.uploadCatalogToS3(catalogData)
 
 		return updatedProduct
 	}
