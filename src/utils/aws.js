@@ -20,4 +20,14 @@ export class AWSS3 {
 			})
 			.promise()
 	}
+
+	async getContentS3JSONFile(fileName) {
+		const data = await this.#s3
+			.getObject({
+				Bucket: process.env.AWS_S3_BUCKET,
+				Key: fileName,
+			})
+			.promise()
+		return JSON.parse(data.Body)
+	}
 }
