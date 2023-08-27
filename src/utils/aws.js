@@ -1,4 +1,4 @@
-import { S3 } from 'aws-sdk'
+import { S3, SQS } from 'aws-sdk'
 import 'dotenv/config'
 
 export class AWSS3 {
@@ -29,5 +29,25 @@ export class AWSS3 {
 			})
 			.promise()
 		return JSON.parse(data.Body)
+	}
+}
+
+export class AWSSQS {
+	#sqs
+
+	constructor() {
+		this.#sqs = new SQS({
+			apiVersion: '2012-11-05',
+			region: process.env.AWS_REGION,
+		})
+	}
+
+	async sendJSONMessage(data) {
+		await this.#sqs
+			.sendMessage({
+				MessageBody: JSON.stringify(data),
+				QueueUrl: process.env.AWS_SQS_URL,
+			})
+			.promise()
 	}
 }
