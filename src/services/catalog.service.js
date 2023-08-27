@@ -51,4 +51,11 @@ export class CatalogService {
 		const data = s3.getContentS3JSONFile(`catalog-${owner}.json`)
 		return data
 	}
+
+	async generateCatalogAndUploadToS3(owner) {
+		const catalogData = await this.generateCatalogJSON(owner)
+		console.log(owner)
+		console.log(catalogData)
+		await this.uploadCatalogToS3(catalogData)
+	}
 }
