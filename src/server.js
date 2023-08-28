@@ -12,7 +12,6 @@ DatabaseConfig.connect().then(() => {
 		const consumer = Consumer.create({
 			queueUrl: process.env.AWS_SQS_URL,
 			handleMessage: async (message) => {
-				console.log(JSON.parse(message.Body).owner)
 				const catalogService = new CatalogService(DatabaseConfig.getDatabase())
 				await catalogService.generateCatalogAndUploadToS3(
 					JSON.parse(message.Body).owner
