@@ -1,9 +1,11 @@
 import 'express-async-errors'
 import express from 'express'
-import categoryRoutes from './routes/category.routes'
-import productRoutes from './routes/product.routes'
+import expressWinston from 'express-winston'
+import winston from 'winston'
 import { AppError } from './errors/AppError'
 import { ZodError } from 'zod'
+import categoryRoutes from './routes/category.routes'
+import productRoutes from './routes/product.routes'
 import catalogRoutes from './routes/catalog.routes'
 
 const app = express()
@@ -12,6 +14,17 @@ app.use(express.json())
 app.use('/categories', categoryRoutes)
 app.use('/products', productRoutes)
 app.use('/catalog', catalogRoutes)
+
+app.use(
+	expressWinston.errorLogger({
+		transports: [
+			new winston.transports.File({
+				filename: 'error-logs.json',
+			}),
+		],
+		format: winston.format.combine(winston.format.json()),
+	})
+)
 
 app.use((err, req, res, next) => {
 	if (err instanceof AppError) {
