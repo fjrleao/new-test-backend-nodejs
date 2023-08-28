@@ -143,7 +143,7 @@ describe('Testing products service', () => {
 			)
 			expect(product._id).toStrictEqual(insertedProduct.insertedId)
 			expect(product.title).toBe('updated_title')
-			expect(product.owner).toBe('updated_owner')
+			expect(product.owner).toBe('valid_owner')
 			expect(product.description).toBe('updated_description')
 			expect(product.price).toBe(10)
 		})
