@@ -1,0 +1,311 @@
+openapi: 3.0.3
+info:
+  title: Catálogo de Produtos
+  description:
+    API REST que permite a gestão completa do seu catálogo de produtos. Com a API, você pode facilmente realizar operações de cadastro, atualização e exclusão de categorias e produtos, além de obter listagens detalhadas do seu catálogo.
+    
+  version: 1.0.0
+tags:
+  - name: categories
+    description: Rotas para manipulação de categorias
+  - name: products
+    description: Rotas para manipulação de produtos
+  - name: catalog
+    description: Rotas para listagem dos produtos do catalogo
+paths:
+  /categories:
+    post:
+      tags:
+        - categories
+      summary: Insere uma nova categoria no banco de dados
+      description: Criação de uma nova categoria para um determinado dono de catálogo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        '201':
+          description: Cadastro realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+              example:
+                  _id: "asdf1j2312j3kasdfsdf"
+                  title: Roupas
+                  owner: John
+                  description: Roupas e acessórios
+        '400':
+          description: Chave com valor inválido ou chave faltando
+          content:
+            application/json:
+              example:
+                message:
+                  owner:
+                    - Required
+                
+        '409':
+          description: Categoria já cadastrada
+          content:
+            application/json:
+              example:
+                message: Category already exists
+                    
+  /categories/{id}:
+    patch:
+      tags:
+        - categories
+      summary: Atualiza as informações de categoria
+      description: Atualização dos dados de uma categoria já cadastrada
+      parameters:
+        - name: id
+          in: path
+          description: id da categoria que será atualizado
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+            example:
+              title: Roupas e acessórios
+        required: true
+      responses:
+        '200':
+          description: Categoria atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+              example:
+                _id: "asdf1j2312j3kasdfsdf"
+                title: Roupas e acessórios
+                owner: John
+                description: Roupas e acessórios
+        '404':
+          description: Quando não é encontrado nenhuma categoria com o id informado
+          content:
+            application/json:
+              example:
+                message: Category does not exists
+                
+        '400':
+          description: Chave com valor inválido ou chave faltando
+          content:
+            application/json:
+              example:
+                message:
+                  owner:
+                    - Required
+    delete:
+      tags:
+        - categories
+      summary: Deleta uma categoria do banco de dados
+      description: Deleta a categoria através do id passado como parâmetro na rota
+      parameters:
+        - name: id
+          in: path
+          description: id da categoria que será excluída
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          description: Quando não é encontrado nenhuma categoria com o id informado
+          content:
+            application/json:
+              example:
+                message: Category does not exists
+  /products:
+    post:
+      tags:
+        - products
+      summary: Insere um novo produto no banco de dados
+      description: Criação de um novo produto em uma determinada categoria para um determinado dono de catálogo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        '201':
+          description: Cadastro realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                  _id: "klasf1231lk2jasdfd"
+                  title: Camiseta
+                  owner: John
+                  description: Camiseta de manga curta
+                  category: Roupas
+                  price: 10.5
+        '400':
+          description: Chave com valor inválido ou chave faltando
+          content:
+            application/json:
+              example:
+                message:
+                  owner:
+                    - Required
+        '409':
+          description: Produto já cadastrada
+          content:
+            application/json:
+              example:
+               message: Product already exists
+        '404':
+          description: Categoria não cadastrada
+          content:
+            application/json:
+              example:
+               message: Category does not exists. Verify the submitted category or create a new category.
+                    
+  /products/{id}:
+    patch:
+      tags:
+        - products
+      summary: Atualiza as informações de produto
+      description: Atualização dos dados de um produto já cadastrada
+      parameters:
+        - name: id
+          in: path
+          description: id do produto que será atualizado
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+            example:
+              title: "Camiseta masculina"
+        required: true
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+              example:
+                _id: "klasf1231lk2jasdfd"
+                title: Camiseta
+                owner: John
+                description: Camiseta de manga curta
+                category: Roupas
+                price: 10.5
+        '400':
+          description: Chave com valor inválido ou chave faltando
+          content:
+            application/json:
+              example:
+                message:
+                  owner:
+                    - Required
+        '404':
+          description: Quando não é encontrado nenhum produto com o id informado
+          content:
+            application/json:
+              example:
+                message: Product does not exists
+    delete:
+      tags:
+        - products
+      summary: Deleta um produto
+      description: Deleta o produto através do id passado como parâmetro na rota
+      parameters:
+        - name: id
+          in: path
+          description: id do produto que será excluído
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          description: Quando não é encontrado nenhum produto com o id informado
+          content:
+            application/json:
+              example:
+                message: Product does not exists
+  
+  /catalog/{owner}:
+    get:
+      tags:
+        - catalog
+      summary: Lista o catalógo filtrando pelo owner
+      description: Listagem do catálogo de todos os produtos para todas as categorias de determinado owner
+      parameters:
+        - name: owner
+          in: path
+          description: owner que o catalogo será buscado
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista o catálogo de um determinado owner
+          content:
+            application/json:
+              example:
+                  owner: John
+                  catalog:
+                    - category_title: Roupas
+                      category_description: Roupas e acessórios
+                      itens:
+                        - title: Camiseta
+                          description: descricao
+                          price: 10
+                        - title: Jaqueta
+                          description: descricao
+                          price: 10
+        '404':
+          description: Catálogo não encontrado
+          content:
+            application/json:
+              example:
+               message: Data not found
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Roupas"
+        owner:
+          type: string
+          example: "John"
+        description:
+          type: string
+          example: "Roupas e acessórios"
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Camiseta"
+        owner:
+          type: string
+          example: "John"
+        description:
+          type: string
+          example: "Camiseta de manga curta"
+        category:
+          type: string
+          example: "Roupas"
+        price:
+          type: number
+          example: 10.50
+  
